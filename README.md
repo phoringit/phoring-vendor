@@ -1,4 +1,4 @@
-# sixvalley_vendor_app
+# phoring_vendor_app
 
 A new Flutter application.
 
