@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sixvalley_vendor_app/localization/language_constrants.dart';
 import 'package:sixvalley_vendor_app/features/shop/controllers/shop_controller.dart';
+import 'package:sixvalley_vendor_app/main.dart';
 import 'package:sixvalley_vendor_app/utill/color_resources.dart';
 import 'package:sixvalley_vendor_app/utill/dimensions.dart';
 import 'package:sixvalley_vendor_app/common/basewidgets/custom_button_widget.dart';
@@ -35,10 +36,11 @@ class VacationDialogWidget extends StatelessWidget {
 
                   Padding(padding: const EdgeInsets.only(top: Dimensions.paddingSizeDefault, bottom: Dimensions.paddingSizeSmall),
                     child: Row(children: [
-                        Text(getTranslated('please_select_vacation_date_range', context)!),
+                        Flexible(child: Text(getTranslated('please_select_vacation_date_range', context)!, maxLines: 2, overflow: TextOverflow.ellipsis,)),
                       ],
                     ),
                   ),
+
                   InkWell(
                     splashColor: Colors.transparent,
                     onTap: ()=> showDialog(context: context, builder: (_)=> const VacationCalenderWidget()),
@@ -51,14 +53,14 @@ class VacationDialogWidget extends StatelessWidget {
                             borderRadius: BorderRadius.circular(Dimensions.paddingSizeExtraSmall)),
                         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(shop.startDate),
+                            Text(shop.startDate == 'Start Date' ? getTranslated('start_date', Get.context!)! :  shop.startDate),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeExtraSmall),
                               child: Icon(Icons.arrow_forward_rounded,size: Dimensions.iconSizeDefault,
 
                                   color:  Theme.of(context).primaryColor),
                             ),
-                            Text(shop.endDate),
+                            Text(shop.endDate == 'End Date' ? getTranslated('end_date', Get.context!)! : shop.endDate),
                           ],
                         ),
                       ),

@@ -12,7 +12,8 @@ import 'package:sixvalley_vendor_app/common/basewidgets/custom_image_widget.dart
 class ItemCartWidget extends StatelessWidget {
   final CartModel? cartModel;
   final int? index;
-  const ItemCartWidget({Key? key, this.cartModel, this.index}) : super(key: key);
+  final void Function() onChanged;
+  const ItemCartWidget({Key? key, this.cartModel, this.index, required this.onChanged}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +34,7 @@ class ItemCartWidget extends StatelessWidget {
         key: UniqueKey(),
         onDismissed: (DismissDirection direction) {
           Provider.of<CartController>(context, listen: false).removeFromCart(index!);
+          onChanged();
         },
         child: Container(decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
@@ -73,6 +75,7 @@ class ItemCartWidget extends StatelessWidget {
                         InkWell(
                           onTap: (){
                             cartController.setQuantity(context,false, index, showToaster: true);
+                            onChanged();
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeExtraSmall),
@@ -84,7 +87,8 @@ class ItemCartWidget extends StatelessWidget {
                           style: robotoRegular.copyWith())),
                         InkWell(
                           onTap: (){
-                            cartController.setQuantity(context,true, index, showToaster: true, );
+                            cartController.setQuantity(context,true, index, showToaster: true);
+                            onChanged();
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeExtraSmall),

@@ -19,6 +19,7 @@ import 'package:sixvalley_vendor_app/features/addProduct/domain/models/file_uplo
 import 'package:sixvalley_vendor_app/features/addProduct/domain/models/product_image_model.dart';
 import 'package:sixvalley_vendor_app/features/addProduct/domain/services/add_product_service_interface.dart';
 import 'package:sixvalley_vendor_app/features/auth/controllers/auth_controller.dart';
+import 'package:sixvalley_vendor_app/features/restock/controllers/restock_controller.dart';
 import 'package:sixvalley_vendor_app/features/splash/domain/models/config_model.dart';
 import 'package:sixvalley_vendor_app/features/addProduct/domain/models/edt_product_model.dart';
 import 'package:sixvalley_vendor_app/features/addProduct/domain/models/image_model.dart';
@@ -244,6 +245,7 @@ class AddProductController extends ChangeNotifier {
     _pickedCover = null;
     _selectedColor = [];
     _variantTypeList = [];
+    print('------------------list-------${_variantTypeList.length}');
     ApiResponse response = await shopServiceInterface.getAttributeList(language);
     if (response.response != null && response.response!.statusCode == 200) {
       _attributeList = [];
@@ -655,6 +657,7 @@ class AddProductController extends ChangeNotifier {
   late ImageModel thumbnail;
   late ImageModel metaImage;
   List<ImageModel> withColor = [];
+  List<ColorImage> previousColorImage = [];
   List<ImageModel> withoutColor = [];
   List<String> withColorKeys = [];
   List<String> withoutColorKeys = [];
@@ -693,7 +696,9 @@ class AddProductController extends ChangeNotifier {
       }else {
         _coveredImage = await ImagePicker().pickImage(source: ImageSource.gallery);
         if (_coveredImage != null && index != null) {
-          if(update){totalPickedImage --;}
+          if(update) {
+            totalPickedImage --;
+          }
           withColor[index].image =  _coveredImage;
           withColor[index].type =  'product';
         }else if(_coveredImage != null) {
@@ -767,17 +772,25 @@ class AddProductController extends ChangeNotifier {
     withColor = [];
   }
 
-  Future addProductImage(BuildContext context, ImageModel imageForUpload, Function callback, {bool update =false, int? index}) async {
+  Future addProductImage(BuildContext context, ImageModel imageForUpload, Function callback, {bool update =false, int? index, int? productId}) async {
     _isLoading = true;
     notifyListeners();
+
+    ///delete productImages before update new Color image
+    // await onDeleteAllProductImage(update, productId, index);
+
+    for(int i = 0; i < colorImageObject.length; i++) {
+      print('----(colorImageObject)----($i)-------${colorImageObject[i].color} || ${colorImageObject[i].imageName?.path} || ${colorImageObject[i].imageName?.key}');
+    }
+
     ApiResponse response = await shopServiceInterface.addImage(context, imageForUpload, attributeList![0].active);
+
     if(response.response != null && response.response!.statusCode == 200) {
       totalUploaded ++;
       _isLoading = false;
       Map map = jsonDecode(response.response!.data);
       String? name = map["image_name"];
       String? type = map["type"];
-      log("=img====>$name==> ${map["image_name"]}");
       if(type == 'product'){
         if(map["image_name"] != null && map["image_name"] != "null"){
           productReturnImage?.add({
@@ -789,15 +802,36 @@ class AddProductController extends ChangeNotifier {
         if(attributeList![0].active){
 
           if(update && map["color_image"]['color'] != null && index != null && (index < imagesWithColorForUpdate.length)){
-            log("===inside/ $update/${map["color_image"]['color']}/${index +1}/${imagesWithColorForUpdate.length}");
-            colorImageObject.removeAt(index);
-            colorImageObject.insert(index, ColorImage(color:  map['color_image'] != null ? map['color_image']['color'] : null, imageName: ImageFullUrl(key: name), storage: map['storage']));
+
+
+            String? previousColor = map["color_image"]['color'];
+
+            int imageIndex = colorImageObject.indexWhere((v) => v.color == previousColor);
+
+            if(imageIndex != -1) {
+              colorImageObject[imageIndex] = ColorImage(
+                color: previousColor,
+                imageName: ImageFullUrl(key: name),
+                storage: map['storage'],
+              );
+            }else {
+              int i = withColor.indexWhere((v) => v.color == previousColor);
+              ///if previous color remove form previous screen and add new that time it will return -1
+              if(i == -1) {
+                colorImageObject.add(ColorImage(
+                  color: previousColor,
+                  imageName: ImageFullUrl(key: name),
+                  storage: map['storage'],
+                ));
+              }
+            }
+
           }else{
-            log("========not Here========");
             colorImageObject.add(ColorImage(color:  map['color_image'] != null ? map['color_image']['color'] : null, imageName: ImageFullUrl(key: name), storage: map['storage']));
           }
         }
       }
+
       callback(true, name, type, map['color_image'] != null ? map['color_image']['color'] : null);
       notifyListeners();
     }else {
@@ -806,6 +840,84 @@ class AddProductController extends ChangeNotifier {
       showCustomSnackBarWidget(getTranslated('image_upload_failed', Get.context!), Get.context!);
     }
     notifyListeners();
+  }
+
+  // Future onDeleteAllProductImage(bool update, int? productId, int? index, ) async {
+  //
+  //   if(update && productId != null && previousColorImage.isNotEmpty && index == 0) {
+  //     bool isImageDeleted = false;
+  //
+  //     await Future.forEach(withColor, (element) async{
+  //       String? imgColor = element.color?.replaceAll('#', '');
+  //
+  //       int i =  previousColorImage.indexWhere((v) => v.color == imgColor);
+  //
+  //       if(i != -1) {
+  //
+  //         if(previousColorImage[i].imageName?.key != null && element.image != null) {
+  //           isImageDeleted = true;
+  //           _isLoading = true;
+  //           notifyListeners();
+  //
+  //           await deleteProductImage(productId.toString(), previousColorImage[i].imageName?.key ?? '', imgColor);
+  //         }
+  //
+  //       }
+  //     });
+  //
+  //     if(isImageDeleted) {
+  //       await getProductImage(productId.toString());
+  //     }
+  //
+  //
+  //   }
+  // }
+
+  Future<void> onDeleteAllProductImage(bool update, int? productId, int? index) async {
+    // Exit early if conditions aren't met
+    if (!update || productId == null || previousColorImage.isEmpty || index != 0) {
+      return;
+    }
+
+    bool isImageDeleted = false;
+
+    // Iterate over withColor list
+    for (var element in withColor) {
+      String? imgColor = element.color?.replaceAll('#', '');
+
+      // Find matching color index
+      int i = previousColorImage.indexWhere((v) => v.color == imgColor);
+
+      // Ensure valid index and both image and key are present
+      if (i != -1 && previousColorImage[i].imageName?.key != null && element.image != null) {
+        isImageDeleted = true;
+      }
+    }
+
+    // If an image is marked for deletion, update state and delete images
+
+    print('-------is delete-----$isImageDeleted');
+    if (isImageDeleted) {
+      _isLoading = true;
+      notifyListeners();
+
+      // Perform image deletion
+      await Future.forEach(withColor, (element) async {
+        String? imgColor = element.color?.replaceAll('#', '');
+
+        int i = previousColorImage.indexWhere((v) => v.color == imgColor);
+
+        if (i != -1 && previousColorImage[i].imageName?.key != null && element.image != null) {
+          await deleteProductImage(productId.toString(), previousColorImage[i].imageName!.key!, imgColor);
+        }
+      });
+
+      // Fetch updated product images after deletion
+      await getProductImage(productId.toString());
+
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
 
@@ -972,6 +1084,7 @@ class AddProductController extends ChangeNotifier {
     //     _variationTotalQuantity = _variationTotalQuantity + qty;
     //   }
     // }
+    print('-----------gen----${_variantTypeList.length}');
     // print("====TotalVariationCount=====>${_variationTotalQuantity}");
   }
   
@@ -1073,12 +1186,44 @@ class AddProductController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteProductImage(String id, String name, String? color) async {
+
+  Future<void> updateRestockProductQuantity(BuildContext context, int? productId, int currentStock, List<Variation> variations,{int? index}) async {
+    if(kDebugMode){
+      print("variation======>${variations.length}/${variations.toList()}");
+    }
+    List<Variation> updatedVariations = [];
+    for(int i=0; i<variations.length; i++){
+      updatedVariations.add(Variation(type: variations[i].type,
+          sku: variations[i].sku,
+          price: variations[i].price,
+          qty: int.parse(_variantTypeList[i].qtyController.text)
+      ));
+    }
+    _isLoading = true;
+    notifyListeners();
+    ApiResponse apiResponse = await shopServiceInterface.updateRestockProductQuantity(productId, currentStock, updatedVariations);
+    if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
+      _isLoading = false;
+      Navigator.pop(Get.context!);
+      showCustomSnackBarWidget(getTranslated('quantity_updated_successfully', Get.context!), Get.context!, isError: false);
+      await Provider.of<RestockController>(context, listen: false).getRestockProductList(1);
+      // Provider.of<RestockController>(Get.context!, listen: false).removeItem(index);
+    } else {
+      _isLoading = false;
+      ApiChecker.checkApi(apiResponse);
+    }
+    notifyListeners();
+  }
+
+
+  Future<void> deleteProductImage(String id, String name, String? color, {bool updateProductImage = true}) async {
     //_isLoading = true;
     ApiResponse apiResponse = await shopServiceInterface.deleteProductImage(id, name, color);
     if (apiResponse.response != null && apiResponse.response!.statusCode == 200) {
       //_isLoading = false;
-      getProductImage(id);
+     if(updateProductImage) {
+        getProductImage(id);
+     }
     } else {
       // _isLoading = false;
       ApiChecker.checkApi(apiResponse);
@@ -1111,7 +1256,8 @@ class AddProductController extends ChangeNotifier {
   List<String> imagesWithoutColor = [];
   List<String> imagesWithColorForUpdate = [];
   ProductImagesModel? productImagesModel;
-  Future<void> getProductImage(String id) async {
+
+  Future<void> getProductImage(String id, {bool isStorePreviousImage = false}) async {
     imagesWithoutColor = [];
     productReturnImage = [];
     colorImageObject = [];
@@ -1130,7 +1276,17 @@ class AddProductController extends ChangeNotifier {
       productImagesModel = ProductImagesModel.fromJson(apiResponse.response?.data);
 
       if(productImagesModel!.colorImage!.isNotEmpty) {
-        colorImageObject = productImagesModel!.colorImage!;
+        colorImageObject = productImagesModel?.colorImage ?? [];
+
+        if(isStorePreviousImage) {
+          previousColorImage = [];
+          previousColorImage.addAll(productImagesModel?.colorImage ?? []);
+          // previousColorImage = productImagesModel?.colorImage ?? [];
+          previousColorImage.forEach((v){
+            print('-----------previous image value------${v.imageName?.key} || ${v.imageName?.path} || ${v.color} || ${v.storage}');
+          });
+        }
+
         log("withcolor==>out ${withColor.length}----> ");
         for(int i = 0; i<productImagesModel!.colorImage!.length; i++) {
           ColorImage img = productImagesModel!.colorImage![i];
@@ -1187,6 +1343,8 @@ class AddProductController extends ChangeNotifier {
       _isLoading = false;
       ApiChecker.checkApi(apiResponse);
     }
+
+    print('===============get product images-----------');
     notifyListeners();
   }
 

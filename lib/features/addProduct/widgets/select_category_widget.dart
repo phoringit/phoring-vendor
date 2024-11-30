@@ -42,7 +42,7 @@ class SelectCategoryWidgetState extends State<SelectCategoryWidget> {
                 border: Border.all(width: .5, color: Theme.of(context).primaryColor.withOpacity(.7)),
               ),
               child: DropdownButton<int>(
-                value: resProvider.categoryIndex,
+                value: resProvider.categoryIndex == -1 ? 0 : resProvider.categoryIndex,
                 items: resProvider.categoryIds.map((int? value) {
                   return DropdownMenuItem<int>(
                     value: resProvider.categoryIds.indexOf(value),
@@ -103,10 +103,10 @@ class SelectCategoryWidgetState extends State<SelectCategoryWidget> {
                       borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
                       border: Border.all(width: .5, color: Theme.of(context).primaryColor.withOpacity(.7)),),
                   child: DropdownButton<int>(
-                    value: resProvider.subSubCategoryIndex,
+                    value: resProvider.subSubCategoryIndex == -1 ? null :resProvider.subSubCategoryIndex,
                     items: resProvider.subSubCategoryIds.map((int? value) {
                       return DropdownMenuItem<int>(
-                        value: resProvider.subSubCategoryIds.indexOf(value),
+                        value:  resProvider.subSubCategoryIds.indexOf(value),
                         child: Text(value != 0 ?
                         resProvider.subSubCategoryList![(resProvider.subSubCategoryIds.indexOf(value)-1)].name! :
                         getTranslated('select', context)!),

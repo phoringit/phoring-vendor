@@ -8,6 +8,7 @@ import 'package:sixvalley_vendor_app/features/auth/domain/models/register_model.
 import 'package:sixvalley_vendor_app/data/model/response/base/api_response.dart';
 import 'package:sixvalley_vendor_app/data/model/response/response_model.dart';
 import 'package:sixvalley_vendor_app/features/auth/domain/services/auth_service_interface.dart';
+import 'package:sixvalley_vendor_app/features/auth/screens/auth_screen.dart';
 import 'package:sixvalley_vendor_app/localization/language_constrants.dart';
 import 'package:sixvalley_vendor_app/main.dart';
 import 'package:sixvalley_vendor_app/localization/controllers/localization_controller.dart';
@@ -80,6 +81,9 @@ class AuthController with ChangeNotifier {
   bool get spatialCheck => _spatialCheck;
   bool get showPassView => _showPassView;
 
+  bool _isUnAuthorize = false;
+  bool get isUnAuthorize => _isUnAuthorize;
+
   Future<ApiResponse> login(BuildContext context, {String? emailAddress, String? password}) async {
     _isLoading = true;
     notifyListeners();
@@ -88,6 +92,7 @@ class AuthController with ChangeNotifier {
     notifyListeners();
     await Provider.of<AuthController>(Get.context!, listen: false).updateToken(Get.context!);
     setCurrentLanguage(Provider.of<LocalizationController>(Get.context!, listen: false).getCurrentLanguage()??'en');
+    setUnAuthorize(false);
     notifyListeners();
     return apiResponse;
   }
@@ -130,7 +135,10 @@ class AuthController with ChangeNotifier {
     return authServiceInterface.isLoggedIn();
   }
 
-  Future<bool> clearSharedData() async {
+  Future<bool> clearSharedData({bool fromUnAuthorizationError = false}) async {
+    if(fromUnAuthorizationError){
+      Navigator.of(Get.context!).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const AuthScreen()), (route) => false);
+    }
     return await authServiceInterface.clearSharedData();
   }
 
@@ -304,5 +312,14 @@ class AuthController with ChangeNotifier {
   bool isPasswordValid (){
     return (_lengthCheck && _numberCheck && _lowercaseCheck && _uppercaseCheck && _spatialCheck && _numberCheck);
   }
+
+
+  void setUnAuthorize(bool value, {bool update = false}) {
+    _isUnAuthorize = value;
+    if(update) {
+      notifyListeners();
+    }
+  }
+
 
 }

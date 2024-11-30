@@ -26,8 +26,6 @@ class QuantityUpdateDialogWidget extends StatefulWidget {
 }
 
 class _QuantityUpdateDialogWidgetState extends State<QuantityUpdateDialogWidget> {
-
-
   int addColor = 0;
 
   void _load(){
@@ -42,8 +40,9 @@ class _QuantityUpdateDialogWidgetState extends State<QuantityUpdateDialogWidget>
     _load();
     Provider.of<AddProductController>(context,listen: false).setCurrentStock(widget.product!.currentStock.toString());
     super.initState();
-
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Dialog(

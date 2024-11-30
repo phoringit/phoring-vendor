@@ -152,6 +152,7 @@ class CouponCardWidget extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(Dimensions.paddingSizeMedium),
                         child: FlutterSwitch(
+                          toggleColor: adminCoupon ? Theme.of(context).disabledColor : Theme.of(context).cardColor,
                           activeColor: adminCoupon ? Theme.of(context).colorScheme.tertiaryContainer : Theme.of(context).primaryColor,
                             width: 40,height: 20,toggleSize: 18,padding: 1,
                             value: coupons!.status == 1,
@@ -161,7 +162,8 @@ class CouponCardWidget extends StatelessWidget {
                               }else{
                                 couponProvider.updateCouponStatus(context, coupons!.id, value ? 1 : 0, index);
                               }
-                            }),
+                            }
+                          ),
                       ),
                     ),
                   )

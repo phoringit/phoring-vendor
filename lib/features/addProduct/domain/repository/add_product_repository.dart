@@ -138,14 +138,16 @@ class AddProductRepository implements AddProductRepositoryInterface{
     Map<String, dynamic> fields = {};
     List<Map<String, dynamic>> colorImage = [];
 
-    for(int i = 0; i<colorImageObject.length; i++ ){
-      colorImage.add({
-        "color" : colorImageObject[i].color,
-        "image_name" : colorImageObject[i].imageName?.key,
-        "storage" : colorImageObject[i].storage ?? 'public',
-      });
+    if(product.productType == 'digital' || (addProduct.colorCodeList != null && addProduct.colorCodeList!.isEmpty)) {
+    } else {
+      for(int i = 0; i<colorImageObject.length; i++ ) {
+        colorImage.add({
+          "color" : colorImageObject[i].color,
+          "image_name" : colorImageObject[i].imageName?.key,
+          "storage" : colorImageObject[i].storage ?? 'public',
+        });
+      }
     }
-
 
     print("===DigitalVauthor==Repo==>>${digitalVariationModel?.authors}");
 
@@ -343,6 +345,25 @@ class AddProductRepository implements AddProductRepositoryInterface{
       return ApiResponse.withError(ApiErrorHandler.getMessage(e));
     }
   }
+
+
+  @override
+  Future<ApiResponse> updateRestockProductQuantity(int? productId,int currentStock, List <Variation> variation) async {
+    try {
+      final response = await dioClient!.post(AppConstants.restockUpdateProductQuantity,
+          data: {
+            "product_id": productId,
+            "current_stock": currentStock,
+            "variation" : jsonEncode(variation),
+            // "_method":"put"
+          }
+      );
+      return ApiResponse.withSuccess(response);
+    } catch (e) {
+      return ApiResponse.withError(ApiErrorHandler.getMessage(e));
+    }
+  }
+
 
 
 

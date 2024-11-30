@@ -27,6 +27,7 @@ class CustomTextFieldWidget extends StatefulWidget {
   final Color? fillColor;
   final TextCapitalization capitalization;
   final bool isAmount;
+  final bool isFullNumber;
   final bool amountIcon;
   final bool border;
   final bool isDescription;
@@ -58,6 +59,7 @@ class CustomTextFieldWidget extends StatefulWidget {
         this.capitalization = TextCapitalization.none,
         this.fillColor,
         this.isAmount = false,
+        this.isFullNumber = false,
         this.amountIcon = false,
         this.border = false,
         this.isDescription = false,
@@ -93,7 +95,7 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
       decoration: BoxDecoration(
         //border : !widget.formProduct ? widget.border? Border.all(width: 1, color: Theme.of(context).hintColor.withOpacity(.35)):null : null,
         color: Theme.of(context).highlightColor,
-        borderRadius: BorderRadius.circular(Dimensions.paddingSizeExtraSmall),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: TextFormField(
         controller: widget.controller,
@@ -106,7 +108,7 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
         onChanged: widget.onChanged,
         enabled: widget.idDate ? false : true,
         inputFormatters: (widget.textInputType == TextInputType.phone || widget.isPhoneNumber) ? <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp('[0-9+]'))]
-            : widget.isAmount ? [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))] : null,
+            : widget.isAmount ? [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))] : widget.isFullNumber ? [FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))]  : null,
         keyboardType: widget.isAmount ? TextInputType.number : widget.textInputType ?? TextInputType.text,
         textInputAction: widget.textInputAction ?? TextInputAction.next,
         onFieldSubmitted: widget.onFieldSubmit ?? (v) {
@@ -129,13 +131,13 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
           Dimensions.paddingSizeSmall , 0, Provider.of<LocalizationController>(context, listen: false).isLtr?Dimensions.paddingSizeSmall:0,0),
             child: Container(padding: const EdgeInsets.all(Dimensions.paddingSizeSmall+3),
                 decoration: BoxDecoration(color: Theme.of(context).primaryColor.withOpacity(.135)),
-            child: Image.asset(widget.prefixIconImage!,width: 20, height: 20,)),):const SizedBox(),
+            child: Image.asset(widget.prefixIconImage!,width: 20, height: 20))) : const SizedBox(),
           suffixIconConstraints:  BoxConstraints(minWidth:widget.variant ? 5 : widget.isPos? 0 : 40,
             minHeight:widget.variant ? 5 : 20),
           suffixIcon: widget.isPassword? GestureDetector(onTap: _toggle,
               child: Icon(_obscureText ? Icons.visibility_off : Icons.visibility)):const SizedBox.shrink(),
           hintText: widget.hintText ?? '',
-          focusedBorder: widget.focusBorder ? OutlineInputBorder(borderSide: BorderSide(color: Theme.of(context).primaryColor)) : null,
+          focusedBorder: widget.focusBorder ? OutlineInputBorder(borderSide: BorderSide(color: widget.borderColor)) : null,
 
 
           // OutlineInputBorder(borderRadius: BorderRadius.circular(8),

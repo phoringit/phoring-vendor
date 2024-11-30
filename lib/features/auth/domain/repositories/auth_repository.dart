@@ -128,8 +128,14 @@ class AuthRepository implements AuthRepositoryInterface{
 
   @override
   Future<bool> clearSharedData() async {
-    await FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.topic);
-    await FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.maintenanceModeTopic);
+    try{
+      await FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.topic);
+      await FirebaseMessaging.instance.unsubscribeFromTopic(AppConstants.maintenanceModeTopic);
+    }catch(e) {
+      if (kDebugMode) {
+        print("====Execption====>>${e}");
+      }
+    }
     return sharedPreferences!.remove(AppConstants.token);
   }
 

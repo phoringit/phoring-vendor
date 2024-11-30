@@ -1,4 +1,4 @@
-# phoring_vendor_app
+# Phoring Vendor App
 
 A new Flutter application.
 

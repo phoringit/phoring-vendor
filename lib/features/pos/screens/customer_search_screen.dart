@@ -11,7 +11,6 @@ import 'package:sixvalley_vendor_app/utill/images.dart';
 import 'package:sixvalley_vendor_app/utill/styles.dart';
 import 'package:sixvalley_vendor_app/common/basewidgets/custom_app_bar_widget.dart';
 import 'package:sixvalley_vendor_app/common/basewidgets/custom_divider_widget.dart';
-
 import 'package:sixvalley_vendor_app/common/basewidgets/custom_search_field_widget.dart';
 import 'package:sixvalley_vendor_app/common/basewidgets/no_data_screen.dart';
 

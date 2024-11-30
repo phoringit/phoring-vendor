@@ -28,6 +28,7 @@ class Customers {
   String? phone;
   String? image;
   String? email;
+  double? walletBalance;
 
   Customers(
       {this.id,
@@ -36,6 +37,7 @@ class Customers {
         this.phone,
         this.image,
         this.email,
+        this.walletBalance
       });
 
   Customers.fromJson(Map<String, dynamic> json) {
@@ -45,7 +47,11 @@ class Customers {
     phone = json['phone'];
     image = json['image'];
     email = json['email'];
-
+    if(json['wallet_balance'] != null) {
+      walletBalance = double.tryParse(json['wallet_balance'].toString());
+    } else {
+      walletBalance = 0;
+    }
   }
 
   Map<String, dynamic> toJson() {

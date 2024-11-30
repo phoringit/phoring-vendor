@@ -57,6 +57,11 @@ import 'package:sixvalley_vendor_app/features/profile/domain/services/profile_se
 import 'package:sixvalley_vendor_app/features/refund/domain/repositories/refund_repository_interface.dart';
 import 'package:sixvalley_vendor_app/features/refund/domain/services/refund_service.dart';
 import 'package:sixvalley_vendor_app/features/refund/domain/services/refund_service_interface.dart';
+import 'package:sixvalley_vendor_app/features/restock/controllers/restock_controller.dart';
+import 'package:sixvalley_vendor_app/features/restock/domain/repositories/restock_repository.dart';
+import 'package:sixvalley_vendor_app/features/restock/domain/repositories/restock_repository_interface.dart';
+import 'package:sixvalley_vendor_app/features/restock/domain/services/restock_service.dart';
+import 'package:sixvalley_vendor_app/features/restock/domain/services/restock_service_interface.dart';
 import 'package:sixvalley_vendor_app/features/review/domain/repositories/product_review_repository_interface.dart';
 import 'package:sixvalley_vendor_app/features/review/domain/services/review_service.dart';
 import 'package:sixvalley_vendor_app/features/review/domain/services/review_service_interface.dart';
@@ -190,6 +195,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => productDetailsRepositoryInterface);
   BarcodeRepositoryInterface barcodeRepositoryInterface = BarcodeRepository(dioClient: sl());
   sl.registerLazySingleton(() => barcodeRepositoryInterface);
+  RestockRepositoryInterface restockRepositoryInterface = RestockRepository(dioClient: sl());
+  sl.registerLazySingleton(() => restockRepositoryInterface);
 
   AuthServiceInterface authServiceInterface = AuthService(authRepoInterface: sl());
   sl.registerLazySingleton(() => authServiceInterface);
@@ -239,6 +246,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => productDetailsServiceInterface);
   BarcodeServiceInterface barcodeServiceInterface = BarcodeService(barcodeRepositoryInterface: sl());
   sl.registerLazySingleton(() => barcodeServiceInterface);
+  RestockServiceInterface restockServiceInterface = RestockService(restockRepositoryInterface: sl());
+  sl.registerLazySingleton(() => restockServiceInterface);
 
 
 
@@ -267,7 +276,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => OrderDetailsService(orderDetailsRepositoryInterface: sl()));
   sl.registerLazySingleton(() => ProductDetailsService(productDetailsRepositoryInterface: sl()));
   sl.registerLazySingleton(() => BarcodeService(barcodeRepositoryInterface: sl()));
-
+  sl.registerLazySingleton(() => RestockService(restockRepositoryInterface : sl()));
 
 
   // Repository
@@ -295,6 +304,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => OrderDetailsRepository(dioClient: sl()));
   sl.registerLazySingleton(() => ProductDetailsRepository(dioClient: sl()));
   sl.registerLazySingleton(() => BarcodeRepository(dioClient: sl()));
+  sl.registerLazySingleton(() => RestockRepository(dioClient: sl()));
 
   // Controller
   sl.registerFactory(() => AuthController(authServiceInterface: sl()));
@@ -325,5 +335,6 @@ Future<void> init() async {
   sl.registerFactory(() => BottomMenuController());
   sl.registerFactory(() => LocationController(locationServiceInterface: sl()));
   sl.registerFactory(() => BarcodeController(barcodeServiceInterface: sl()));
+  sl.registerFactory(() => RestockController(restockServiceInterface: sl()));
 
 }

@@ -1,4 +1,4 @@
-package com.phoringit.pmart_vendor
+package com.sixamtech.sixvalley.seller
 
 import io.flutter.embedding.android.FlutterActivity
 

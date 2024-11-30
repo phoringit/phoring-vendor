@@ -70,11 +70,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       },
       child: Scaffold(
         key: _scaffoldKey,
-
         appBar: AppBar(elevation: 1,
           backgroundColor: Theme.of(context).cardColor, toolbarHeight: 120,
           leadingWidth: 0, automaticallyImplyLeading: false,
-
 
           title: Consumer<OrderDetailsController>(
             builder: (context, orderDetailsController,_) {
@@ -279,6 +277,32 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                     Text(PriceConverter.convertPrice(context, totalPrice),
                                       style: titilliumSemiBold.copyWith(fontSize: Dimensions.fontSizeExtraLarge,
                                           color: Theme.of(context).primaryColor),),]),
+
+                                  if (orderDetailsController.orderDetails![0].order!.orderType == 'POS')
+                                    Column(
+                                      children: [
+                                        const SizedBox(height: Dimensions.paddingSizeSmall),
+                                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                          Text(getTranslated('paid_amount', context)!,
+                                              style: titilliumRegular.copyWith(
+                                                  color: ColorResources.titleColor(context))),
+                                          Text(PriceConverter.convertPrice(context, orderDetailsController.orderDetails![0].order!.paidAmount),
+                                              style: titilliumRegular.copyWith(
+                                                  color: ColorResources.titleColor(context))),]
+                                        ),
+                                        const SizedBox(height: Dimensions.paddingSizeSmall),
+
+                                        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                          Text(getTranslated('change_amount', context)!,
+                                              style: titilliumRegular.copyWith(
+                                                  color: ColorResources.titleColor(context))),
+                                          Text(PriceConverter.convertPrice(context, orderDetailsController.orderDetails![0].order!.paidAmount! - totalPrice),
+                                              style: titilliumRegular.copyWith(
+                                                  color: ColorResources.titleColor(context))),]
+                                        ),
+                                       // const SizedBox(height: Dimensions.paddingSizeSmall),
+                                      ],
+                                    ),
                                 ],),),
                             ]),
 

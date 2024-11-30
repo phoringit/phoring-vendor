@@ -22,7 +22,6 @@ class OrderModel {
       });
     }
   }
-
 }
 
 
@@ -35,6 +34,7 @@ class Order {
   String? _paymentMethod;
   String? _transactionRef;
   double? _orderAmount;
+  double? _paidAmount;
   BillingAddressData? _shippingAddressData;
   BillingAddressData? _billingAddressData;
   String? _createdAt;
@@ -75,6 +75,7 @@ class Order {
         String? paymentMethod,
         String? transactionRef,
         double? orderAmount,
+        double? paidAmount,
         BillingAddressData? shippingAddressData,
         BillingAddressData? billingAddressData,
         double? shippingCost,
@@ -111,6 +112,7 @@ class Order {
     _paymentMethod = paymentMethod;
     _transactionRef = transactionRef;
     _orderAmount = orderAmount;
+    _paidAmount = paidAmount;
     _shippingAddressData = shippingAddressData;
     _billingAddressData = billingAddressData;
     _shippingCost = shippingCost;
@@ -166,6 +168,7 @@ class Order {
   String? get paymentMethod => _paymentMethod;
   String? get transactionRef => _transactionRef;
   double? get orderAmount => _orderAmount;
+  double? get paidAmount => _paidAmount;
   double? get shippingCost => _shippingCost;
   BillingAddressData? get shippingAddressData => _shippingAddressData;
   BillingAddressData? get billingAddressData => _billingAddressData;
@@ -203,6 +206,14 @@ class Order {
         _orderAmount = json['order_amount'].toDouble();
       }catch(e){
         _orderAmount = double.parse(json['order_amount'].toString());
+      }
+    }
+
+    if(json['paid_amount'] != null){
+      try{
+        _paidAmount = json['paid_amount'].toDouble();
+      }catch(e){
+        _paidAmount = double.parse(json['paid_amount'].toString());
       }
     }
     if(json['shipping_cost'] != null){

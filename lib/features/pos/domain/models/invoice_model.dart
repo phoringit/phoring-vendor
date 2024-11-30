@@ -2,6 +2,7 @@ import 'package:sixvalley_vendor_app/features/addProduct/domain/models/edt_produ
 
 class InvoiceModel {
   double? orderAmount;
+  double? paidAmount;
   String? createdAt;
   double? discountAmount;
   double? extraDiscount;
@@ -12,6 +13,7 @@ class InvoiceModel {
   InvoiceModel(
     {
       this.orderAmount,
+      this.paidAmount,
       this.createdAt,
       this.extraDiscount,
       this.extraDiscountType,
@@ -29,8 +31,16 @@ class InvoiceModel {
       }catch(e){
         orderAmount = double.parse(json['order_amount'].toString());
       }
-
     }
+
+    if(json['paid_amount'] != null){
+      try{
+        paidAmount = json['paid_amount'].toDouble();
+      }catch(e) {
+        paidAmount = double.parse(json['paid_amount'].toString());
+      }
+    }
+
     createdAt = json['created_at'];
     paymentMethod = json['payment_method'];
 
@@ -70,6 +80,7 @@ class InvoiceModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['order_amount'] = orderAmount;
+    data['paid_amount'] = paidAmount;
     data['created_at'] = createdAt;
     data['discount_amount'] = discountAmount;
     data['extra_discount'] = extraDiscount;

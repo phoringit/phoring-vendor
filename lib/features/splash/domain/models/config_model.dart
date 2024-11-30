@@ -217,7 +217,7 @@ class ConfigModel {
     if(json['software_version'] != null){
       _version = json['software_version'];
     }
-    _forgotPasswordVerification = json['forgot_password_verification'];
+    _forgotPasswordVerification = json['vendor_forgot_password_method'];
     _countryCode = json['country_code'];
     _decimalPointSettings = int.tryParse(json['decimal_point_settings'].toString());
     _brandSetting = json['brand_setting'];

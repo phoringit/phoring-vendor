@@ -9,7 +9,7 @@ class TemporaryCartListModel {
   double? _couponAmount;
   String? couponCode;
   double? _extraDiscount;
-
+  bool? _isUser;
 
 
   TemporaryCartListModel(
@@ -21,6 +21,7 @@ class TemporaryCartListModel {
         double? couponAmount,
         String? couponCode,
         double? extraDiscount,
+        bool? isUser,
       }) {
     _cart = cart;
     _userId = userId;
@@ -29,7 +30,7 @@ class TemporaryCartListModel {
     _customerBalance = customerBalance;
     _couponAmount = couponAmount;
     _extraDiscount = extraDiscount;
-
+    _isUser = isUser;
   }
 
   List<CartModel>? get cart => _cart;
@@ -41,7 +42,7 @@ class TemporaryCartListModel {
   double? get couponAmount => _couponAmount;
   // ignore: unnecessary_getters_setters
   double? get extraDiscount => _extraDiscount;
-
+  bool? get isUser => _isUser;
 
   set couponAmount(double? value) {
     _couponAmount = value;
@@ -65,8 +66,7 @@ class TemporaryCartListModel {
     _customerBalance = json['customer_balance'];
     couponCode = json['coupon_code'];
     _couponAmount = json['coupon_discount_amount'];
-
-
+    _isUser = json['is_user'];
   }
 
   Map<String, dynamic> toJson() {
@@ -80,6 +80,7 @@ class TemporaryCartListModel {
     data['customer_balance'] = _customerName;
     data['coupon_code'] = couponCode;
     data['coupon_discount_amount'] = _couponAmount;
+    data['is_user'] = _isUser;
 
 
     return data;

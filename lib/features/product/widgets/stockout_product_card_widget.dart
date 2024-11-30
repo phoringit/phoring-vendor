@@ -4,6 +4,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:sixvalley_vendor_app/features/barcode/controllers/barcode_controller.dart';
 import 'package:sixvalley_vendor_app/features/product/domain/models/product_model.dart';
+import 'package:sixvalley_vendor_app/features/product/widgets/limited_stock_product_update_dialog.dart';
+import 'package:sixvalley_vendor_app/features/restock/controllers/restock_controller.dart';
 import 'package:sixvalley_vendor_app/localization/language_constrants.dart';
 import 'package:sixvalley_vendor_app/localization/controllers/localization_controller.dart';
 import 'package:sixvalley_vendor_app/features/product/controllers/product_controller.dart';
@@ -211,7 +213,7 @@ class _StockOutProductWidgetState extends State<StockOutProductWidget> {
                   ),
                 ),) ,
 
-              Consumer<AddProductController>(
+              Consumer<RestockController>(
                   builder: (context, productProvider, _) {
                     return Positioned(bottom: 13, right: Provider.of<LocalizationController>(context, listen: false).isLtr? 15 : null,
                       left: Provider.of<LocalizationController>(context, listen: false).isLtr? null : 5,
@@ -225,16 +227,16 @@ class _StockOutProductWidgetState extends State<StockOutProductWidget> {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return QuantityUpdateDialogWidget(
+                                return LimitedStockQuantityUpdateDialogWidget(
                                     stockQuantityController: _stockQuantityController,
                                     product: widget.productModel,
                                     title: getTranslated('product_variations', context),
                                     onYesPressed: () {
                                       bool isEmpty = false;
 
-                                      if(productProvider.variantTypeList.isNotEmpty){
-                                        for (int i=0; i< productProvider.variantTypeList.length; i++) {
-                                          if(productProvider.variantTypeList[i].qtyController.text == '' && !isEmpty) {
+                                      if(productProvider.variationQuantityController.isNotEmpty){
+                                        for (int i=0; i< productProvider.variationQuantityController.length; i++) {
+                                          if(productProvider.variationQuantityController[i].text == '' && !isEmpty) {
                                             isEmpty = true;
                                           }
                                         }

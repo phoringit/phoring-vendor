@@ -8,6 +8,7 @@ import 'package:sixvalley_vendor_app/common/basewidgets/custom_button_widget.dar
 import 'package:sixvalley_vendor_app/common/basewidgets/custom_image_widget.dart';
 import 'package:sixvalley_vendor_app/common/basewidgets/textfeild/custom_text_feild_widget.dart';
 import 'package:sixvalley_vendor_app/features/addProduct/domain/models/add_product_model.dart';
+import 'package:sixvalley_vendor_app/features/addProduct/domain/models/image_model.dart';
 import 'package:sixvalley_vendor_app/features/addProduct/widgets/add_product_title_bar.dart';
 import 'package:sixvalley_vendor_app/features/addProduct/widgets/meta_seo_widget.dart';
 import 'package:sixvalley_vendor_app/features/product/domain/models/product_model.dart';
@@ -24,6 +25,8 @@ import 'package:sixvalley_vendor_app/utill/styles.dart';
 import 'package:sixvalley_vendor_app/common/basewidgets/custom_app_bar_widget.dart';
 import 'package:sixvalley_vendor_app/common/basewidgets/custom_snackbar_widget.dart';
 import 'package:textfield_tags/textfield_tags.dart';
+
+import '../../../data/model/image_full_url.dart';
 
 class AddProductSeoScreen extends StatefulWidget {
   final ValueChanged<bool>? isSelected;
@@ -161,11 +164,11 @@ class AddProductSeoScreenState extends State<AddProductSeoScreen> {
           }
         }
 
-        log("--===> Image is ==> ${Provider.of<AddProductController>(Get.context!, listen: false).totalPickedImage} and ${Provider.of<AddProductController>(Get.context!,listen: false).totalUploaded}");
-        if(Provider.of<AddProductController>(Get.context!,listen: false).totalUploaded >= (withc+withOurC)){
-          Provider.of<AddProductController>(Get.context!,listen: false).addProduct(context, _product!, _addProduct!, thumbnailImage, metaImage, !_update, tagList);
-
-        }
+        // log("--===>call Image is ==> ${Provider.of<AddProductController>(Get.context!, listen: false).totalPickedImage} and ${Provider.of<AddProductController>(Get.context!,listen: false).totalUploaded} || ${(withc+withOurC)}");
+        // if(Provider.of<AddProductController>(Get.context!,listen: false).totalUploaded >= (withc+withOurC)){
+        //   // Provider.of<AddProductController>(Get.context!,listen: false).addProduct(context, _product!, _addProduct!, thumbnailImage, metaImage, !_update, tagList);
+        //
+        // }
       }else{
         if(Provider.of<AddProductController>(Get.context!,listen: false).withColor.isNotEmpty) {
           for(int index=0; index<Provider.of<AddProductController>(Get.context!,listen: false).withColor.length; index++) {
@@ -491,18 +494,12 @@ class AddProductSeoScreenState extends State<AddProductSeoScreen> {
                                     }
                                   }
 
-                                  print("===ImageURl===>>${resProvider.withColor[index].colorImage?.imageName?.toJson() ?? ''}");
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
                                     child: (resProvider.withColor[index].color != null && resProvider.withColor[index].image == null)?
                                     GestureDetector(
-                                      onTap: (){
+                                      onTap: () async {
                                         resProvider.pickImage(false, false, false, index, update: _update);
-                                        log("=update=>$_update");
-                                        resProvider.removeImage(index, true);
-                                        if(_update && resProvider.withColor[index].imageString != null &&  resProvider.withColor[index].imageString!.isNotEmpty){
-                                          resProvider.deleteProductImage(_product!.id.toString(), resProvider.withColor[index].imageString.toString(), resProvider.withColor[index].color.toString().replaceAll("#",""));
-                                        }
 
                                       },
                                       child: Stack(children: [
@@ -551,11 +548,11 @@ class AddProductSeoScreenState extends State<AddProductSeoScreen> {
                                             splashColor: Colors.transparent,
                                             onTap: (){
                                             resProvider.pickImage(false, false, false, index);
-                                            log("=update=>$_update");
-                                            resProvider.removeImage(index, true);
-                                            if(_update && resProvider.withColor[index].imageString != null &&  resProvider.withColor[index].imageString!.isNotEmpty){
-                                              resProvider.deleteProductImage(_product!.id.toString(), resProvider.withColorKeys[index].toString(), resProvider.withColor[index].color.toString().replaceAll("#",''));
-                                            }
+                                            // log("=update=>$_update");
+                                            // resProvider.removeImage(index, true);
+                                            // if(_update && resProvider.withColor[index].imageString != null &&  resProvider.withColor[index].imageString!.isNotEmpty){
+                                            //   resProvider.deleteProductImage(_product!.id.toString(), resProvider.withColorKeys[index].toString(), resProvider.withColor[index].color.toString().replaceAll("#",''));
+                                            // }
                                           },
                                             child: Container(width: 30,height: 30,
                                                 decoration: BoxDecoration(color: Color(int.parse(colorString)),
@@ -722,7 +719,7 @@ class AddProductSeoScreenState extends State<AddProductSeoScreen> {
                             Expanded(
                               child: CustomButtonWidget(
                                 btnTxt: _update ? getTranslated('update',context) : getTranslated('submit', context),
-                                onTap: (){
+                                onTap: () async {
                                   resProvider.initUpload();
                                   String seoDescription = _seoDescriptionController.text.trim();
                                   String seoTitle = _seoTitleController.text.trim();
@@ -735,6 +732,7 @@ class AddProductSeoScreenState extends State<AddProductSeoScreen> {
                                   int multi = int.parse(multiPlyWithQuantity);
                                   String productCode = resProvider.productCode.text;
                                   bool isColorImageEmpty = false;
+                                  bool isProductImageNull = false;
 
 
                                   List<String> titleList = [];
@@ -756,11 +754,25 @@ class AddProductSeoScreenState extends State<AddProductSeoScreen> {
                                     }
                                   }
 
-                                  if (!_update && resProvider.pickedLogo == null) {
+
+
+                                  if(_update && (widget.product!.imagesFullUrl != null && widget.product!.imagesFullUrl!.isNotEmpty)) {
+                                    for(ImageFullUrl image in widget.product!.imagesFullUrl!) {
+                                      if(image.path == null || image.path == '') {
+                                        isProductImageNull = true;
+                                        break;
+                                      }
+                                    }
+                                  }
+
+
+
+
+                                  if ((!_update && resProvider.pickedLogo == null) || (_update && (resProvider.pickedLogo == null  && (widget.product?.thumbnailFullUrl?.path == null || widget.product?.thumbnailFullUrl?.path == ''))) ) {
                                     showCustomSnackBarWidget(getTranslated('upload_thumbnail_image',context),context, sanckBarType: SnackBarType.warning);
                                   } else if(!_update && resProvider.attributeList![0].active && resProvider.attributeList![0].variants.isNotEmpty && isColorImageEmpty) {
                                     showCustomSnackBarWidget(getTranslated('upload_product_color_image',context),context, sanckBarType: SnackBarType.warning);
-                                  } else if (!_update && resProvider.withColor.length + resProvider.withoutColor.length == 0) {
+                                  } else if (!_update && resProvider.withColor.length + resProvider.withoutColor.length == 0  || (_update && resProvider.withColor.length + resProvider.withoutColor.length == 0 && ((widget.product!.imagesFullUrl != null && widget.product!.imagesFullUrl!.isEmpty) || isProductImageNull))) {
                                     showCustomSnackBarWidget(getTranslated('upload_product_image',context),context, sanckBarType: SnackBarType.warning);
                                   }
                                   else {
@@ -815,86 +827,79 @@ class AddProductSeoScreenState extends State<AddProductSeoScreen> {
 
 
                                     if(_update){
-                                      int withc=0, withOurC=0;
-                                      log("--===> Image is ==> ${resProvider.totalPickedImage} an ${resProvider.totalUploaded}");
-                                      for(int i = 0; i< resProvider.withColor.length; i++){
-                                        if(resProvider.withColor[i].image != null){
-                                          withc++;
+
+                                      for (ImageModel value in resProvider.withColor) {
+                                        ///if on online -> value.colorImage?.imageName?.path
+                                        ///if on offline -> value.image?.path
+                                        if(value.image?.path == null && value.colorImage?.imageName?.path == null) {
+                                          showCustomSnackBarWidget('${getTranslated('please_add_color_image', context)}', context);
+                                          return;
                                         }
                                       }
 
-                                      for(int i = 0; i< resProvider.withoutColor.length; i++){
-                                        if(resProvider.withoutColor[i].image != null){
-                                          withOurC++;
-                                        }
-                                      }
-                                      if((withc + withOurC) <= resProvider.totalUploaded && resProvider.pickedLogo == null && resProvider.pickedMeta == null){
-                                        resProvider.addProduct(context, _product!, _addProduct!, thumbnailImage, metaImage, !_update, tagList);
-                                      } else{
-                                        if(resProvider.pickedLogo != null){
-                                          resProvider.addProductImage(context,resProvider.thumbnail, route, update: _update);
-                                        }
 
-                                        if(resProvider.pickedMeta != null){
-                                          resProvider.addProductImage(context,resProvider.metaImage, route, update: _update);
-                                        }
-
-                                        if(resProvider.withColor.isNotEmpty){
-                                          for(int i =0; i<resProvider.withColor.length; i++)
-                                          {
-                                            if(resProvider.withColor[i].image != null){
-                                              resProvider.addProductImage(context,resProvider.withColor[i], route, index: i, update: _update);
-                                            }
-
-                                          }
-                                        }
-
-                                        if(resProvider.withoutColor.isNotEmpty){
-                                          log("--aikhane");
-                                          for(int i =0; i<resProvider.withoutColor.length; i++)
-                                          {
-                                            if(resProvider.withoutColor[i].image != null){
-                                              resProvider.addProductImage(context,resProvider.withoutColor[i], route, index: i, update: _update);
-                                            }
-
-                                          }
-                                        }
-
-
-                                      }
-
-
-                                    }
-                                    else{
                                       if(resProvider.pickedLogo != null){
-                                        resProvider.addProductImage(context,resProvider.thumbnail, route);
+                                        await resProvider.addProductImage(context,resProvider.thumbnail, route, update: _update);
+
                                       }
 
                                       if(resProvider.pickedMeta != null){
-                                        resProvider.addProductImage(context,resProvider.metaImage,route);
+                                        await resProvider.addProductImage(context,resProvider.metaImage, route, update: _update);
+
                                       }
 
-
                                       if(resProvider.withColor.isNotEmpty){
-                                        for(int i =0; i<resProvider.withColor.length; i++)
-                                        {
-                                          resProvider.addProductImage(context,resProvider.withColor[i], route);
+                                        for(int i =0; i<resProvider.withColor.length; i++) {
+
+                                          ///delete productImages before update new Color image
+                                          await resProvider.onDeleteAllProductImage(_update, _product?.id, i);
+
+                                          if(resProvider.withColor[i].image != null && context.mounted){
+                                            await resProvider.addProductImage(context, resProvider.withColor[i], route, index: i, update: _update);
+                                          }
+
                                         }
                                       }
 
                                       if(resProvider.withoutColor.isNotEmpty){
                                         for(int i =0; i<resProvider.withoutColor.length; i++)
                                         {
-                                          resProvider.addProductImage(context,resProvider.withoutColor[i], route);
+                                          if(resProvider.withoutColor[i].image != null){
+                                            await resProvider.addProductImage(context,resProvider.withoutColor[i], route, index: i, update: _update);
+                                          }
+
                                         }
                                       }
 
                                     }
+                                    else{
+                                      if(resProvider.pickedLogo != null){
+                                        await resProvider.addProductImage(context,resProvider.thumbnail, route);
+                                      }
+
+                                      if(resProvider.pickedMeta != null){
+                                       await resProvider.addProductImage(context,resProvider.metaImage,route);
+                                      }
 
 
+                                      if(resProvider.withColor.isNotEmpty){
+                                        for(int i =0; i<resProvider.withColor.length; i++) {
+                                         await resProvider.addProductImage(context,resProvider.withColor[i], route);
+                                        }
+                                      }
+
+                                      if(resProvider.withoutColor.isNotEmpty){
+                                        for(int i =0; i<resProvider.withoutColor.length; i++) {
+                                         await resProvider.addProductImage(context,resProvider.withoutColor[i], route);
+
+                                        }
+                                      }
+                                    }
                                   }
 
-
+                                  if(_update) {
+                                    Provider.of<AddProductController>(Get.context!,listen: false).addProduct(context, _product!, _addProduct!, thumbnailImage, metaImage, !_update, tagList);
+                                  }
 
                                 },
                               ),

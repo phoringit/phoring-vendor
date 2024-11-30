@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sixvalley_vendor_app/features/restock/screens/restock_list_screen.dart';
 import 'package:sixvalley_vendor_app/localization/language_constrants.dart';
 import 'package:sixvalley_vendor_app/features/profile/controllers/profile_controller.dart';
 import 'package:sixvalley_vendor_app/features/splash/controllers/splash_controller.dart';
@@ -62,6 +63,10 @@ class MenuBottomSheetWidget extends StatelessWidget {
 
       CustomBottomSheetWidget(image: Images.settings, title: getTranslated('settings', context),
           onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (_)=> const SettingsScreen()))),
+
+
+      CustomBottomSheetWidget(image: Images.restockIcon, title: getTranslated('restock', context),
+          onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (_)=> const RestockListScreen()))),
 
 
       CustomBottomSheetWidget(image: Images.wallet, title: getTranslated('wallet', context),

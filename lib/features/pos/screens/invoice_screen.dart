@@ -111,9 +111,7 @@ class _InVoiceScreenState extends State<InVoiceScreen> {
                   print("===000==TT=>>${cartController.totalTaxAmount}");
 
 
-                  totalPayableAmount = orderAmount +
-                       cartController.totalTaxAmount -
-                      cartController.discountOnProduct
+                  totalPayableAmount = orderAmount + cartController.totalTaxAmount - cartController.discountOnProduct
                       - extraDiscountAmount - cartController.invoice!.discountAmount! + includeTax!;
                 }
                 return Column(children: [
@@ -278,7 +276,7 @@ class _InVoiceScreenState extends State<InVoiceScreen> {
                           Column(children: [
 
                             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
-                              Text(getTranslated('subtotal', context)!,style: robotoRegular.copyWith(),),
+                              Text(getTranslated('subtotal', context)!,style: robotoRegular.copyWith()),
                               // Text("${orderAmount}" , style: robotoRegular.copyWith(),),
                               Text(PriceConverter.convertPrice(context, cartController.invoice!.orderAmount)),
                             ],),
@@ -326,6 +324,22 @@ class _InVoiceScreenState extends State<InVoiceScreen> {
                             Text(PriceConverter.convertPrice(context, totalPayableAmount),
                                 style: robotoBold.copyWith(fontSize: Dimensions.fontSizeLarge)),
                           ],),
+                          const SizedBox(height: Dimensions.paddingSizeDefault),
+
+
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
+                            Text(getTranslated('paid_amount', context)!,style: robotoRegular.copyWith(),),
+                            Text(PriceConverter.convertPrice(context,  cartController.invoice!.paidAmount)),
+                          ]),
+                          const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+
+                          if(cartController.invoice!.paidAmount != null)
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
+                            Text(getTranslated('change_amount', context)!,style: robotoRegular.copyWith(),),
+                            Text(PriceConverter.convertPrice(context, (cartController.invoice!.paidAmount! - totalPayableAmount))),
+                          ]),
+
+
                           const SizedBox(height: Dimensions.paddingSizeDefault),
 
                           Text('"""${getTranslated('thank_you', context)}"""', style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeExtraLarge)),

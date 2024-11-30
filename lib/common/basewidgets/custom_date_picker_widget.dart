@@ -43,10 +43,10 @@ class _CustomDatePickerWidgetState extends State<CustomDatePickerWidget> {
           child: InkWell(
             onTap: widget.selectDate as void Function()?,
             child: Row( mainAxisAlignment: MainAxisAlignment.start,children: [
-              SizedBox(width: 20,height: 20,child: Image.asset(widget.image!)),
-              const SizedBox(width: Dimensions.paddingSizeSmall),
+              SizedBox(width: 15, height: 15, child: Image.asset(widget.image!)),
+              const SizedBox(width: Dimensions.paddingSizeExtraSmall),
 
-              Text(widget.text!, style: robotoRegular.copyWith(),),
+              Text(widget.text!, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeSmall)),
             ],),
           ),
         ),

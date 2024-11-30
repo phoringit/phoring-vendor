@@ -56,6 +56,7 @@ class MetaSeoWidget extends StatelessWidget {
                   )),
 
                   Expanded(child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
                       MetaSeoItem(
@@ -216,7 +217,7 @@ class MetaSeoItem extends StatelessWidget {
         ),
         const SizedBox(width: Dimensions.paddingSizeSmall),
 
-        Text(getTranslated(title, context)!, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeDefault)),
+        Flexible(child: Text(getTranslated(title, context)!, maxLines: 2, overflow: TextOverflow.ellipsis, style: robotoRegular.copyWith(fontSize: Dimensions.fontSizeDefault))),
       ]),
     );
   }

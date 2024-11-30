@@ -2,10 +2,12 @@ import 'package:sixvalley_vendor_app/localization/models/language_model.dart';
 import 'package:sixvalley_vendor_app/utill/images.dart';
 
 class AppConstants {
-  static const String appName = 'E-PHORING Vendor';
-  static const String appVersion = '14.8';
-  static const String companyName = 'E-PHORING';
-  static const String baseUrl = 'https://ephoring.com.bd';
+  static const String appName = 'Vendor App';
+  static const String appVersion = '14.9.1';
+  static const String companyName = '6Valley';
+
+  static const String baseUrl = 'Your_Base_URL';
+
   static const String loginUri = '/api/v3/seller/auth/login';
   static const String configUri = '/api/v1/config';
   static const String sellerUri = '/api/v3/seller/seller-info';
@@ -119,7 +121,10 @@ class AppConstants {
   static const String reviewReply = '/api/v3/seller/shop-product-reviews-reply';
   static const String deleteDigitalProductVariationFile = '/api/v3/seller/products/delete-digital-product';
   static const String getSingleRefundModel = '/api/v3/seller/refund/single-item?id=';
-
+  static const String getRestockList = '/api/v3/seller/products/restock-request-list';
+  static const String restockUpdateProductQuantity = '/api/v3/seller/products/restock-request-stock-update';
+  static const String restockBrandListUri = '/api/v3/seller/products/restock-request-brands-list';
+  static const String restockRequestDelete = '/api/v3/seller/products/restock-request-delete?id=';
 
 
   ///address

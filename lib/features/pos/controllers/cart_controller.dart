@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,6 +48,11 @@ class CartController extends ChangeNotifier{
   double _totalTaxAmount = 0;
   double get totalTaxAmount => _totalTaxAmount;
 
+  bool _paidAmountless = true;
+  bool get paidAmountless => _paidAmountless;
+
+  bool _updatePaidAmount = true;
+  bool get updatePaidAmount => _updatePaidAmount;
 
   final TextEditingController _collectedCashController = TextEditingController();
   TextEditingController get collectedCashController => _collectedCashController;
@@ -164,24 +170,30 @@ class CartController extends ChangeNotifier{
     notifyListeners();
   }
 
-  void applyCouponCodeAndExtraDiscount(BuildContext context){
+  void applyCouponCodeAndExtraDiscount(BuildContext context, double payable){
     _extraDiscountAmount = 0;
     String extraDiscount = _extraDiscountController.text.trim();
     _extraDiscountAmount = double.parse(extraDiscount);
     print("======>>Anount===>>$_amount");
     print("======>>Anount==0123==>>$_extraDiscountAmount");
+    print("======>>payable==0123==>>$payable");
 
-    if(_extraDiscountAmount >  double.tryParse(PriceConverter.convertPriceWithoutSymbol(Get.context!, _amount))!) {
-      showCustomSnackBarWidget(getTranslated('discount_cant_greater_than_order_amount', context),context,isToaster: true);
+    double extraDiscountPercent = double.parse(PriceConverter.discountCalculationWithOutSymbol(context, amount, _extraDiscountAmount, _selectedDiscountType));
+
+    if(_selectedDiscountType == 'percent' ?
+      extraDiscountPercent > double.tryParse(PriceConverter.convertPriceWithoutSymbol(Get.context!, payable))! :
+      _extraDiscountAmount >  double.tryParse(PriceConverter.convertPriceWithoutSymbol(Get.context!, payable))!
+    ) {
+      showCustomSnackBarWidget(getTranslated('discount_cant_greater_than_order_amount', Get.context!), Get.context!, sanckBarType: SnackBarType.warning, isToaster: true, );
     }else{
       _customerCartList[_customerIndex].extraDiscount = _extraDiscountAmount;
-      showCustomSnackBarWidget(getTranslated('extra_discount_added_successfully', context),context,isToaster: true, isError: false);
+      showCustomSnackBarWidget(getTranslated('extra_discount_added_successfully', Get.context!), Get.context!, isToaster: true, isError: false);
     }
-
     notifyListeners();
   }
-  void setReturnAmountToZero()
-  {
+
+
+  void setReturnAmountToZero() {
     _returnToCustomerAmount = 0;
     notifyListeners();
   }
@@ -200,13 +212,13 @@ class CartController extends ChangeNotifier{
       _extraDiscountAmount = 0;
     }
     if(_customerCartList.isEmpty){
+      /// Initialy Create cart List
       TemporaryCartListModel customerCart = TemporaryCartListModel(
           cart: [],
           userIndex: 0,
           userId: 0,
           customerName: 'wc-0');
       addToCartListForUser(customerCart, clear: false);
-
     }
 
     if (_customerCartList[_customerIndex].cart!.any((e) => (cartModel.varientKey == null &&  e.product!.id == cartModel.product!.id && ((e.variant == cartModel.variant))))) {
@@ -254,21 +266,26 @@ class CartController extends ChangeNotifier{
   }
 
 
-  void addToCartListForUser(TemporaryCartListModel cartList,{bool clear = false}) {
+  void addToCartListForUser(TemporaryCartListModel cartList,{bool clear = false, bool formInit = false}) {
     if(_customerCartList.isEmpty){
       _customerIds = [];
     }
 
     if (_customerCartList.any((e) => e.userId == cartList.userId && cartList.userId != 0)) {
+      print("=====IF======>>");
       searchCustomerController.text = 'walking customer';
       setCustomerInfo( 0,  'walking customer', 'NULL', false);
       //_customerCartList.removeAt(_customerIds.indexOf(cartList.userIndex));
     }else{
+      print("=====Else======>>");
       _customerIds.add(_customerIds.length);
       _customerCartList.add(cartList);
-      showCustomSnackBarWidget(getTranslated('new_order_added_successfully', Get.context!), Get.context!, isError: false, sanckBarType: SnackBarType.success);
-      if(clear){
 
+      print("====FromInit====>${formInit}");
+      if(!formInit){
+        // showCustomSnackBarWidget(getTranslated('new_order_added_successfully', Get.context!), Get.context!, isError: false, sanckBarType: SnackBarType.success);
+      }
+      if(clear){
         notifyListeners();
       }
     }
@@ -717,10 +734,86 @@ class CartController extends ChangeNotifier{
 
   }
 
-  void setCustomerInfo(int? id, String? name, String? phone,  bool notify) {
+  void setCustomerInfo(int? id, String? name, String? phone,  bool notify, {bool formCart = false, fromInit = false}) {
+    print("==1234==>>${_customerId}");
+    print("==1324==>>${_customerSelectedName}");
+    print("==1324==>>${_customerSelectedMobile}");
+
+
     _customerId = id;
     _customerSelectedName = name;
     _customerSelectedMobile  = phone;
+
+    print("==1234==>>${_customerId}");
+    print("==1324==>>${_customerSelectedName}");
+    print("==1324==>>${_customerSelectedMobile}");
+
+
+
+    // bool isExist = false;
+    // int indexOfExistingUser = 0;
+    //
+    // for(TemporaryCartListModel cart in _customerCartList) {
+    //   if(cart.userId == id) {
+    //     isExist = true;
+    //     indexOfExistingUser = _customerCartList.indexOf(cart);
+    //   }
+    // }
+    //
+    // var rng = Random();
+    // for (var i = 0; i < 10; i++) {
+    //   if (kDebugMode) {
+    //     print(rng.nextInt(10000));
+    //   }
+    // }
+    //
+    // print("==IsExistCart====>>$isExist");
+    // print("==Id====>>$id");
+    // print("==FromCart====>>$formCart");
+    // print("==FromCart====>>${isExist && id == 0 && formCart}");
+    //
+    //
+    // if(formCart && id == 0) {
+    //   searchCustomerController.text = 'walking customer';
+    // } else if(formCart) {
+    //   searchCustomerController.text = _customerSelectedName!;
+    // }
+    //
+    //
+    // if (!isExist) {
+    //   TemporaryCartListModel customerCart = TemporaryCartListModel(
+    //     cart: [],
+    //     userIndex: id,
+    //     userId: id,
+    //     customerName: name,
+    //     isUser: id == '0' ? false : true,
+    //   );
+    //   addToCartListForUser(customerCart, clear: false, formInit: fromInit);
+    //
+    //   setCustomerIndex(_customerCartList.length -1, true);
+    //
+    // } else if(isExist && id == 0 && !formCart) {
+    //   print("====>>True<===");
+    //   TemporaryCartListModel customerCart = TemporaryCartListModel(
+    //     cart: [],
+    //     userIndex:  rng.nextInt(10000),
+    //     userId: 0,
+    //     customerName:  'wc-${rng.nextInt(10000)}',
+    //     // customerBalance: customerController.customerBalance,
+    //     isUser: id == '0' ? false : true,
+    //   );
+    //
+    //   addToCartListForUser(customerCart, clear: true, formInit: fromInit);
+    //   setCustomerIndex(_customerCartList.length -1, true);
+    //   //setCustomerInfo( 0,  'walking customer', 'NULL', false);
+    // }
+    //
+    // if(isExist && id != 0) {
+    //   setCustomerIndex(indexOfExistingUser, true);
+    // }
+
+    _paymentTypeIndex = 0;
+
     if(notify) {
       notifyListeners();
     }
@@ -777,5 +870,33 @@ class CartController extends ChangeNotifier{
   String? getBluetoothMacAddress() => cartServiceInterface.getBluetoothAddress();
 
   void setBluetoothMacAddress(String? address) => cartServiceInterface.setBluetoothAddress(address);
+
+
+  void setPaidAmountles(bool value, {bool isUpdate = true}) {
+    _paidAmountless = value;
+    if(isUpdate){
+      notifyListeners();
+    }
+  }
+
+  void setUpdatePaidAmount(bool value, {bool isUpdate = true}) {
+    _updatePaidAmount = value;
+    if(isUpdate){
+      notifyListeners();
+    }
+  }
+
+  bool  checkWalletAmount (int? customerId, double orderAmount) {
+    bool hasAmount = false;
+
+    _searchedCustomerList?.forEach((customer) {
+      if(customer.id == customerId && customer.walletBalance != null && customer.walletBalance! >= orderAmount) {
+        hasAmount = true;
+      }
+    });
+
+    return hasAmount;
+  }
+
 
 }

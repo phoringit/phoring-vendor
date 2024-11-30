@@ -41,6 +41,7 @@ class _AddNewCouponScreenState extends State<AddNewCouponScreen> {
   @override
   void initState() {
     update = widget.coupons != null ? true: false;
+
     if(update){
       couponTitleController.text = widget.coupons!.title!;
       couponCodeController.text = widget.coupons!.code!;

@@ -10,6 +10,7 @@ class PlaceOrderBody {
   double? _extraDiscount;
   String? _extraDiscountType;
   String? _paymentMethod;
+  double? _paidAmount;
 
 
 
@@ -24,6 +25,7 @@ class PlaceOrderBody {
         double? extraDiscount,
         String? extraDiscountType,
         String? paymentMethod,
+        double? paidAmount,
 
 
        }) {
@@ -36,6 +38,7 @@ class PlaceOrderBody {
     _extraDiscount = extraDiscount;
     _extraDiscountType = extraDiscountType;
     _paymentMethod = paymentMethod;
+    _paidAmount = paidAmount;
 
   }
 
@@ -48,6 +51,7 @@ class PlaceOrderBody {
   double? get extraDiscount => _extraDiscount;
   String? get extraDiscountType => _extraDiscountType;
   String? get paymentMethod => _paymentMethod;
+  double? get paidAmount => _paidAmount;
 
 
   PlaceOrderBody.fromJson(Map<String, dynamic> json) {
@@ -65,6 +69,7 @@ class PlaceOrderBody {
     _extraDiscount = json['extra_discount'];
     _extraDiscountType = json ['extra_discount_type'];
     _paymentMethod = json ['payment_method'];
+    _paidAmount = json ['paid_amount'];
   }
 
   Map<String, dynamic> toJson() {
@@ -80,6 +85,7 @@ class PlaceOrderBody {
     data['extra_discount'] = _extraDiscount;
     data['extra_discount_type'] = _extraDiscountType;
     data['payment_method'] = _paymentMethod;
+    data['paid_amount'] = _paidAmount;
 
     return data;
   }

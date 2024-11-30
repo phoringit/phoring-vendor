@@ -14,6 +14,7 @@ import 'package:sixvalley_vendor_app/features/notification/controllers/notificat
 import 'package:sixvalley_vendor_app/features/order_details/controllers/order_details_controller.dart';
 import 'package:sixvalley_vendor_app/features/product/widgets/cookies_widget.dart';
 import 'package:sixvalley_vendor_app/features/product_details/controllers/productDetailsController.dart';
+import 'package:sixvalley_vendor_app/features/restock/controllers/restock_controller.dart';
 import 'package:sixvalley_vendor_app/features/wallet/controllers/wallet_controller.dart';
 import 'package:sixvalley_vendor_app/localization/app_localization.dart';
 import 'package:sixvalley_vendor_app/features/auth/controllers/auth_controller.dart';
@@ -58,10 +59,10 @@ Future<void> main() async {
   if(Firebase.apps.isEmpty){
     if(Platform.isAndroid){
       await Firebase.initializeApp(options: const FirebaseOptions(
-        apiKey: "AIzaSyCXF9AXxyIO7d6G6OgD7uUxyP_6Wx6IgCM",
-        projectId: "phoringsmsbd",
-        messagingSenderId: "152950504609",
-        appId: "1:152950504609:android:2e8aa80428bdbdad6e84e0"
+        apiKey: "current_key here",
+        projectId: "project_id here",
+        messagingSenderId: "project_number here",
+        appId: "mobilesdk_app_id here"
       ));
     }else {
       await Firebase.initializeApp();
@@ -121,7 +122,8 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => di.sl<WalletController>()),
       ChangeNotifierProvider(create: (context) => di.sl<OrderDetailsController>()),
       ChangeNotifierProvider(create: (context) => di.sl<ProductDetailsController>()),
-      ChangeNotifierProvider(create: (context) => di.sl<BarcodeController>())
+      ChangeNotifierProvider(create: (context) => di.sl<BarcodeController>()),
+      ChangeNotifierProvider(create: (context) => di.sl<RestockController>())
     ],
     child: MyApp(body: body),
   ));

@@ -46,7 +46,11 @@ class ApiErrorHandler {
                   }else{
                     errorDescription = error.response!.data['message'];
                   }
-                  Provider.of<AuthController>(Get.context!,listen: false).clearSharedData();
+
+                  if(Provider.of<AuthController>(Get.context!,listen: false).isUnAuthorize == false) {
+                    Provider.of<AuthController>(Get.context!,listen: false).clearSharedData(fromUnAuthorizationError: true);
+                  }
+                  Provider.of<AuthController>(Get.context!,listen: false).setUnAuthorize(true, update: true);
                   break;
                 case 404:
                   if(error.response!.data['errors'] != null){
@@ -58,6 +62,9 @@ class ApiErrorHandler {
                   break;
                 case 500:
                 case 503:
+                  if(error.response!.data['message'] != null){
+                    errorDescription = error.response!.data['message'];
+                  }
                 case 429:
                 //errorDescription = error.response!.statusMessage;
                   break;

@@ -109,7 +109,6 @@ class _AttributeViewWidgetState extends State<AttributeViewWidget> {
                     const SizedBox(height: Dimensions.paddingSizeSmall),
 
                     Row(children: [
-
                       Expanded(child: CustomTextFieldWidget(
                         border: true,
                         controller: resProvider.attributeList![index].controller,

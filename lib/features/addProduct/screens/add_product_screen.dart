@@ -260,8 +260,9 @@ class AddProductScreenState extends State<AddProductScreen> with TickerProviderS
                                             border: Border.all(width: .5, color: Theme.of(context).primaryColor.withOpacity(.7))
                                         ),
                                         child: DropdownButton<String>(
-                                          hint: resProvider.unitValue == null ? Text(getTranslated('select_unit', context)!, style: robotoBold.copyWith(color: Theme.of(context).textTheme.bodySmall?.color)) :
-                                          Text(resProvider.unitValue!, style: TextStyle(color: ColorResources.getTextColor(context)),),
+                                          hint: resProvider.unitValue == null || resProvider.unitValue == 'null'
+                                              ? Text(getTranslated('select_unit', context)!, style: robotoBold.copyWith(color: Theme.of(context).textTheme.bodySmall?.color))
+                                              : Text(resProvider.unitValue!, style: TextStyle(color: ColorResources.getTextColor(context)),),
                                           items: Provider.of<SplashController>(context,listen: false).configModel!.unit!.map((String value) {
                                             return DropdownMenuItem<String>(
                                                 value: value,
@@ -638,7 +639,7 @@ class AddProductScreenState extends State<AddProductScreen> with TickerProviderS
                                   //     resProvider.selectedFileForImport == null) && widget.product == null ) {
                                   //   showCustomSnackBarWidget(getTranslated('please_choose_digital_product',context),context,  sanckBarType: SnackBarType.warning);
                                   // }
-                                  else if (resProvider.categoryIndex == 0) {
+                                  else if (resProvider.categoryIndex == 0 || resProvider.categoryIndex == -1) {
                                     showCustomSnackBarWidget(getTranslated('select_a_category',context),context,  sanckBarType: SnackBarType.warning);
                                   }
                                   else if (resProvider.brandIndex == 0 && Provider.of<SplashController>(context, listen: false).configModel!.brandSetting == "1" && resProvider.productTypeIndex != 1) {
@@ -665,7 +666,7 @@ class AddProductScreenState extends State<AddProductScreen> with TickerProviderS
                                     Navigator.push(context, MaterialPageRoute(builder: (_) => AddProductNextScreen(
                                         categoryId: resProvider.categoryList![resProvider.categoryIndex!-1].id.toString(),
                                         subCategoryId: resProvider.subCategoryIndex != 0? resProvider.subCategoryList![resProvider.subCategoryIndex!-1].id.toString(): "-1",
-                                        subSubCategoryId: resProvider.subSubCategoryIndex != 0? resProvider.subSubCategoryList![resProvider.subSubCategoryIndex!-1].id.toString():"-1",
+                                        subSubCategoryId:(resProvider.subSubCategoryIndex != 0 && resProvider.subSubCategoryIndex! != -1) ? resProvider.subSubCategoryList![resProvider.subSubCategoryIndex!-1].id.toString():"-1",
                                         brandId: brandIds[resProvider.brandIndex!].toString(),
                                         unit: unitValue,
                                         product: widget.product, addProduct: widget.addProduct)));

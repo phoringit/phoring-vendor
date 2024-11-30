@@ -108,7 +108,7 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
 
                             Positioned(top: -4, right: -4,
                               child: CircleAvatar(radius: 7, backgroundColor: Colors.green,
-                                child: Text('${cartController.customerCartList.isNotEmpty?cartController.customerCartList[cartController.customerIndex].cart!.length : 0}',
+                                child: Text('${cartController.customerCartList.isNotEmpty?cartController.customerCartList[0].cart!.length : 0}',
                                     style: robotoRegular.copyWith(color: Theme.of(context).cardColor,
                                     fontSize: Dimensions.fontSizeSmall)), ),
                             ),
@@ -127,7 +127,6 @@ class CustomAppBarWidget extends StatelessWidget implements PreferredSizeWidget 
       ),
     );
   }
-
   @override
   Size get preferredSize => const Size(double.maxFinite, 50);
 }

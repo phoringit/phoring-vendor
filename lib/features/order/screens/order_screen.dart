@@ -62,7 +62,6 @@ class _OrderScreenState extends State<OrderScreen> {
                     OrderTypeButton(text: getTranslated('confirmed', context), index: 7),
                     const SizedBox(width: 5),
                     OrderTypeButton(text: getTranslated('out_for_delivery', context), index: 8),
-
                   ],
                 ),
               ),

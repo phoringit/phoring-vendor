@@ -1,5 +1,3 @@
-
-
 import 'package:intl/intl.dart';
 
 class DateConverter {
@@ -164,5 +162,4 @@ class DateConverter {
     final difference = endDate.difference(startDate).inDays;
     return difference;
   }
-
 }

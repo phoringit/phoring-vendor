@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:sixvalley_vendor_app/common/basewidgets/confirmation_dialog_widget.dart';
 import 'package:sixvalley_vendor_app/common/basewidgets/custom_dialog_widget.dart';
 import 'package:sixvalley_vendor_app/features/addProduct/controllers/add_product_controller.dart';
+import 'package:sixvalley_vendor_app/features/restock/controllers/restock_controller.dart';
 import 'package:sixvalley_vendor_app/helper/network_info.dart';
+import 'package:sixvalley_vendor_app/localization/controllers/localization_controller.dart';
 import 'package:sixvalley_vendor_app/localization/language_constrants.dart';
 import 'package:sixvalley_vendor_app/features/profile/controllers/profile_controller.dart';
 import 'package:sixvalley_vendor_app/utill/color_resources.dart';
@@ -34,9 +36,12 @@ class DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    String languageCode = Provider.of<LocalizationController>(context, listen: false).locale.countryCode == 'US'?
+    'en':Provider.of<LocalizationController>(context, listen: false).locale.countryCode!.toLowerCase();
     Provider.of<ProfileController>(context, listen: false).getSellerInfo();
     Provider.of<AddProductController>(context, listen: false).getDigitalAuthor();
     Provider.of<AddProductController>(context, listen: false).getPublishingHouse();
+    Provider.of<AddProductController>(context,listen: false).getCategoryList(context, null, languageCode);
 
     _screens = [
       HomePageScreen(callback: () {

@@ -184,5 +184,11 @@ class Images {
   static const String digitalPreviewFileIcon = 'assets/image/digital_preview_file_icon.png';
   static const String digitalPreviewDeleteIcon = 'assets/image/delete_preview_icon.png';
   static const String downloadPreviewIcon = 'assets/image/download_preview_icon.png';
+  static const String updateQuantityIcon = 'assets/image/update_quantity_icon.png';
+  static const String dropdown = 'assets/image/dropdown.png';
+  static const String reset = 'assets/image/reset.png';
+  static const String calender = 'assets/image/calender_image.png';
+  static const String restockIcon = 'assets/image/restock_icon.png';
+
 
 }

@@ -856,5 +856,26 @@
   "order_is_delivered_you_cant_change_delivery_man": "ऑर्डर दिया जाता है आप डिलीवरी मैन को नहीं बदल सकते",
   "order_is_already_delivered": "ऑर्डर पहले ही डिलीवर हो चुका है",
   "maintenance_title": "हम कुछ विशेष पर काम कर रहे हैं!",
-  "maintenance_body": "हम किसी भी असुविधा के लिए खेद परकट करते है। तत्काल सहायता के लिए, कृपया हमारी सहायता टीम से संपर्क करें"
+  "maintenance_body": "हम किसी भी असुविधा के लिए खेद परकट करते है। तत्काल सहायता के लिए, कृपया हमारी सहायता टीम से संपर्क करें",
+
+  "paid_amount": "चुकाई गई राशि",
+  "change_amount": "परिवर्तन राशि",
+  "paid_amount_cannot_less_then_order_amount": "भुगतान राशि कम नहीं होनी चाहिए तो आदेश राशि",
+  "restock": "फिर से इकट्ठा करना",
+  "request_restock_request": "रेस्टॉक सूची का अनुरोध करें",
+  "product_not_found": "उत्पाद नहीं मिला",
+  "total_request": "कुल अनुरोध",
+  "last_request": "अंतिम अनुरोध",
+  "main_stock": "मुख्य स्टाक",
+  "stock": "भंडार",
+  "restoke_request_date": "पुनर्स्थापना अनुरोध तिथि",
+  "select_date_or_brand": "select_date_or_brand",
+  "search_products": "उत्पादों को खोजना",
+  "enter_stock_quantity": "स्टॉक मात्रा दर्ज करें",
+  "quantity_should_grater_then_zero": "मात्रा अधिक होनी चाहिए फिर शून्य",
+  "type_something_to_search_for_products": "उत्पादों की खोज करने के लिए कुछ टाइप करें",
+  "paid_amount_cannot_zero": "भुगतान राशि शून्य नहीं होनी चाहिए",
+  "your_wallet_balance_is_less_then_order_amount": "आपके बटुए की शेष राशि ऑर्डर राशि से कम है",
+  "please_add_color_image": "कृपया इसके लिए रंगीन छवि जोड़ें"
+
 }

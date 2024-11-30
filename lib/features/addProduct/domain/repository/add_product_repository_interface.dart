@@ -19,6 +19,7 @@ abstract class AddProductRepositoryInterface implements RepositoryInterface{
   Future<ApiResponse> addProduct(Product product, AddProductModel addProduct, Map<String, dynamic> attributes, List<Map<String,dynamic>>? productImages, String? thumbnail, String? metaImage, bool isAdd, bool isActiveColor, List<ColorImage> colorImageObject, List<String?> tags, String? digitalFileReady, DigitalVariationModel? digitalVariationModel, bool? isDigitalVariationActive, String? token);
   Future<ApiResponse> uploadDigitalProduct(File? filePath, String token);
   Future<ApiResponse> updateProductQuantity(int? productId,int currentStock, List <Variation> variation);
+  Future<ApiResponse> updateRestockProductQuantity(int? productId,int currentStock, List <Variation> variation);
   Future<ApiResponse> deleteProductImage(String id, String name, String? color );
   Future<ApiResponse> getProductImage(String id );
   Future<ApiResponse> deleteDigitalVariationFile(int? productId, String variantKey);

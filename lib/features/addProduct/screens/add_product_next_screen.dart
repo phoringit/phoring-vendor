@@ -75,11 +75,14 @@ class AddProductNextScreenState extends State<AddProductNextScreen> {
   bool showUploadFile = false;
 
 
-  void _load(){
+  Future<void> _load() async {
     String languageCode = Provider.of<LocalizationController>(context, listen: false).locale.countryCode == 'US'?
     'en':Provider.of<LocalizationController>(context, listen: false).locale.countryCode!.toLowerCase();
     Provider.of<SplashController>(context,listen: false).getColorList();
-    Provider.of<AddProductController>(context,listen: false).getAttributeList(context, widget.product, languageCode);
+    await Provider.of<AddProductController>(context,listen: false).getAttributeList(context, widget.product, languageCode);
+
+    Provider.of<AddProductController>(context,listen: false).generateVariantTypes(context,widget.product);
+
   }
 
 
@@ -123,15 +126,15 @@ class AddProductNextScreenState extends State<AddProductNextScreen> {
 
   _asyncMethod() async {
     Future.delayed(const Duration(milliseconds: 800), () async {
-      Provider.of<AddProductController>(context,listen: false).getProductImage(widget.product!.id.toString());
+      Provider.of<AddProductController>(context,listen: false).getProductImage(widget.product!.id.toString(), isStorePreviousImage: true);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
-      onPopInvoked: (bool value) {
+      canPop: Navigator.canPop(context),
+      onPopInvokedWithResult: (didPop, result) async{
         Provider.of<AddProductController>(context,listen: false).setSelectedPageIndex(0, isUpdate: true);
       },
       child: Scaffold(

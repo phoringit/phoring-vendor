@@ -9,7 +9,8 @@ import 'package:sixvalley_vendor_app/common/basewidgets/custom_field_with_title_
 import 'package:sixvalley_vendor_app/common/basewidgets/textfeild/custom_text_feild_widget.dart';
 
 class ExtraDiscountAndCouponDialogWidget extends StatelessWidget {
-  const ExtraDiscountAndCouponDialogWidget({Key? key}) : super(key: key);
+  final double payable;
+  const ExtraDiscountAndCouponDialogWidget({Key? key, required this.payable}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,6 @@ class ExtraDiscountAndCouponDialogWidget extends StatelessWidget {
                         onChanged: (value) {
                           cartController.setSelectedDiscountType(value);
                           cartController.setDiscountTypeIndex(value == 'amount' ? 0 : 1, true);
-
                         },
                         isExpanded: true,
                         underline: const SizedBox(),
@@ -82,8 +82,10 @@ class ExtraDiscountAndCouponDialogWidget extends StatelessWidget {
                       onTap: ()=>Navigator.pop(context))),
                   const SizedBox(width: Dimensions.paddingSizeDefault),
                   Expanded(child: CustomButtonWidget(btnTxt: getTranslated('apply', context),
-                  onTap: (){
-                    cartController.applyCouponCodeAndExtraDiscount(context);
+                  onTap: () async{
+                    cartController.applyCouponCodeAndExtraDiscount(context, payable);
+                    await Future.delayed(const Duration(milliseconds: 500));
+                    cartController.setUpdatePaidAmount(true, isUpdate: true);
                     Navigator.pop(context);
                   },)),
                 ],),
